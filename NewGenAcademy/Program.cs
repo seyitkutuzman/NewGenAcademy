@@ -57,8 +57,14 @@ namespace NewGenAcademy
 
                         //Check we don't have other windows open already
                         Debug.Equals(driver.WindowHandles.Count, 1);
-
-                        driver.FindElement(By.XPath("//*[@id=\"activity-unit-detail\"]/div/div[2]/div/div/div[1]/button")).Click();
+                        try
+                        {
+                            driver.FindElement(By.XPath("//*[@id=\"activity-unit-detail\"]/div/div[2]/div/div/div[1]/button")).Click();
+                        }
+                        catch
+                        {
+                            completeCourse();
+                        }
 
                         //Wait for the new window or tab
                         wait.Until(wd => wd.WindowHandles.Count == 2);
@@ -89,19 +95,35 @@ namespace NewGenAcademy
         }
         public static void completeCourse()
         {
-            while (!(firstProgressStatus == "%100"))
+            try
             {
-                wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id=\"progressTextDiv\"]")));
-                try 
+                driver.FindElement(By.XPath("//*[@id=\"my-player\"]")).Click();
+            }
+            catch
+            {
+
+
+                while (!(firstProgressStatus == "%100"))
                 {
-                    driver.FindElement(By.XPath("//*[@id=\"gotoLastLocationBtn\"]/div[2]")).Click();
                     wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id=\"progressTextDiv\"]")));
-                    firstProgressStatus = driver.FindElement(By.XPath("//*[@id=\"progressTextDiv\"]")).Text;
-                    //driver.FindElement(By.XPath("//*[@id=\"pageHolderImgReplayBSOD4_replay_btn\"]")).Displayed
                     try
                     {
-                        wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"pageHolderImgReplayBSOD4_replay_btn\"]")));
-                        driver.FindElement(By.XPath("//*[@id=\"gonext\"]")).Click();
+                        driver.FindElement(By.XPath("//*[@id=\"gotoLastLocationBtn\"]/div[2]")).Click();
+                        wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id=\"progressTextDiv\"]")));
+                        firstProgressStatus = driver.FindElement(By.XPath("//*[@id=\"progressTextDiv\"]")).Text;
+                        //driver.FindElement(By.XPath("//*[@id=\"pageHolderImgReplayBSOD4_replay_btn\"]")).Displayed
+                        try
+                        {
+                            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"pageHolderImgReplayBSOD4_replay_btn\"]")));
+                            driver.FindElement(By.XPath("//*[@id=\"gonext\"]")).Click();
+                        }
+                        catch
+                        {
+                            wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id=\"progressTextDiv\"]")));
+                            firstProgressStatus = driver.FindElement(By.XPath("//*[@id=\"progressTextDiv\"]")).Text;
+                            Thread.Sleep(2500);
+                            driver.FindElement(By.XPath("//*[@id=\"gonext\"]")).Click();
+                        }
                     }
                     catch
                     {
@@ -109,33 +131,14 @@ namespace NewGenAcademy
                         firstProgressStatus = driver.FindElement(By.XPath("//*[@id=\"progressTextDiv\"]")).Text;
                         Thread.Sleep(2500);
                         driver.FindElement(By.XPath("//*[@id=\"gonext\"]")).Click();
+
                     }
                 }
-                catch
-                {
-                    wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id=\"progressTextDiv\"]")));
-                    firstProgressStatus = driver.FindElement(By.XPath("//*[@id=\"progressTextDiv\"]")).Text;
-                    Thread.Sleep(2500);
-                    driver.FindElement(By.XPath("//*[@id=\"gonext\"]")).Click();
-                    
-                }
+                driver.Close();
+                driver.SwitchTo().Window(originalWindow);
             }
-            driver.Close();
-            driver.SwitchTo().Window(originalWindow);
         }
     }
 
 
 }
-// başla //*[@id="activity-unit-detail"]/div/div[2]/div/div/div[1]/button
-// progress text //*[@id="progressTextDiv"]
-// next slide //*[@id="nextShine"]
-// //*[@id="videoProgressPlayedDiv"]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[16]/div/a
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[2]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[3]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[4]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[5]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[6]
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[20]/div/div/div[1]/div[2]/div[1]/span
-//*[@id="dynamicContent"]/div/div/div[2]/div/div[16]/div/div/div[1]/div[2]/div[1]/span[1]
