@@ -17,8 +17,8 @@ namespace NewGenAcademy
     {
 
         static IWebDriver driver = new ChromeDriver();
-        static string userCode = "2169";
-        static string password = "Talisca94.";
+        static string userCode = "****";
+        static string password = "***********";
         static int status = 1;
         static bool progress = false;
         static string firstProgressStatus = null;
